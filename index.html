@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Display</title>
+    <title>Prediction Timer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
@@ -16,19 +17,135 @@
             color: #ffffff;
         }
 
-        .text-container {
+        .container {
             text-align: center;
             padding: 20px;
             border-radius: 12px;
             background-color: #282828;
-            color: #00ff7f;
-            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(0, 255, 127, 0.6); /* Green neon shadow */
+            width: 90%;
+            max-width: 500px;
+            animation: fadeIn 1.5s ease;
+            position: relative;
+        }
+
+        .neon-text {
+            color: #00ff7f; /* Green neon color */
             font-weight: bold;
-            text-shadow: 0 0 10px #00ff7f, 0 0 20px #00ff7f;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00ff7f, 0 0 20px #00ff7f, 0 0 30px #00ff7f;
+            margin-bottom: 15px;
+        }
+
+        .display-section {
+            margin: 15px 0;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 1.5rem;
+            border: 3px solid #00ff7f; /* Green neon border */
+            border-radius: 8px;
+            background-color: rgba(40, 40, 40, 0.9);
+            text-shadow: 0 0 5px #00ff7f;
+            animation: pulse 2s infinite;
+        }
+
+        /* History styling */
+        .history {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #00ff7f; /* Green neon border */
+            border-radius: 8px;
+            padding: 10px;
+            background-color: rgba(20, 20, 20, 0.8);
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 5px 0;
+            color: #ffffff;
+            font-size: 1rem;
+            border-bottom: 1px solid #00ff7f; /* Green neon border */
+            background-color: rgba(40, 40, 40, 0.8);
+            border-radius: 4px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px #00ff7f; }
+            50% { box-shadow: 0 0 20px #00ff7f; }
         }
     </style>
 </head>
 <body>
-    <div class="text-container">JEVID KI MAKI CHOOT</div>
+    <div class="container">
+        <div class="neon-text">Prediction Timer</div>
+        <div class="display-section" id="periodDisplay">Period Number: Loading...</div>
+        <div class="display-section" id="timerDisplay">Timer: 00 : 00</div>
+        <div class="display-section" id="resultDisplay">Result: Waiting...</div>
+
+        <!-- History Section -->
+        <div class="history">
+            <strong>History</strong>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const resultsArray = ["BIG", "SMALL", "BIG", "SMALL", "BIG", "SMALL", "SMALL", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "BIG", "BIG", "SMALL", "BIG", "BIG", "BIG", "BIG", "SMALL", "SMALL", "BIG", "BIG", "SMALL", "SMALL"];
+        let lastPeriod = null;
+
+        function updateDisplay(period, timer, result) {
+            document.getElementById("periodDisplay").textContent = `Period Number: ${period}`;
+            document.getElementById("timerDisplay").textContent = `Timer: ${timer}`;
+            document.getElementById("resultDisplay").textContent = `Result: ${result}`;
+        }
+
+        function updateTimerDisplay(timer) {
+            document.getElementById("timerDisplay").textContent = `Timer: ${timer}`;
+        }
+
+        function getPeriodNumber() {
+            const now = new Date();
+            const minutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+            const periodBase = 10001 + minutes * 2 + (now.getUTCSeconds() >= 30 ? 1 : 0);
+            return `${now.toISOString().slice(0, 10).replace(/-/g, '')}30${periodBase}`;
+        }
+
+        function addToHistory(period, result) {
+            const historyList = document.getElementById("historyList");
+            const historyItem = document.createElement("div");
+            historyItem.classList.add("history-item");
+            historyItem.innerHTML = `<span>Period: ${period}</span><span>Result: ${result}</span>`;
+            historyList.prepend(historyItem); // Add the new item at the top
+        }
+
+        function updatePeriodAndResult() {
+            const newPeriod = getPeriodNumber();
+            if (newPeriod !== lastPeriod) {
+                lastPeriod = newPeriod;
+                const randomIndex = Math.floor(Math.random() * resultsArray.length);
+                const result = resultsArray[randomIndex];
+                updateDisplay(newPeriod, "00 : 30", result);
+                addToHistory(newPeriod, result);
+            }
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            const remainingSeconds = 30 - (now.getUTCSeconds() % 30);
+            const formattedTime = `00 : ${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            updateTimerDisplay(formattedTime);
+            if (remainingSeconds === 30) {
+                updatePeriodAndResult();
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
