@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Timer</title>
+    <title>Hacking Prediction Results</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Base styling */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f0f0; /* Light background for professionalism */
-            color: #333; /* Dark text color for better readability */
+            background-color: #0d0d0d;
+            color: #00ff00;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -17,123 +18,164 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-color: #0d0d0d; }
+            50% { background-color: #1a1a1a; }
+            100% { background-color: #0d0d0d; }
         }
 
         .container {
-            background-color: white;
+            background-color: #1e1e1e;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 255, 0, 0.5);
             text-align: center;
-            max-width: 500px;
+            max-width: 300px; /* Reduced width */
             width: 100%;
             padding: 20px;
-            transition: transform 0.3s;
+            border: 2px solid #00ff00;
+            animation: fadeIn 1s;
         }
 
-        .container:hover {
-            transform: scale(1.02); /* Slight zoom effect on hover */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 20px;
-            color: #007bff; /* Blue title for a professional look */
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
         }
 
         .box {
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #f8f9fa; /* Slightly darker background for boxes */
-            border: 1px solid #007bff; /* Blue border for consistency */
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #2e2e2e;
+            border: 2px solid #00ff00;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            transition: transform 0.3s;
+            font-size: 1.2rem;
+            max-width: 250px; /* Further reduced width */
+            margin: 5px auto; /* Centered box */
         }
 
-        #timerDisplay, #resultDisplay, #periodDisplay {
-            font-size: 1.5rem;
+        .box:hover {
+            transform: scale(1.05);
+        }
+
+        #timerDisplay, #periodDisplay, #resultDisplay {
+            font-size: 1.2rem;
             font-weight: 700;
-            color: #333;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
         }
 
-        /* Pop-up Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
-            animation: fadeIn 0.5s;
-        }
-
-        .modal-content {
-            background-color: #ffffff;
-            margin: 15% auto; /* 15% from the top and centered */
+        /* Popup styling */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1e1e1e;
+            border: 2px solid #00ff00;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+            z-index: 1000;
             padding: 20px;
-            border-radius: 8px;
-            width: 80%; /* Could be more or less, depending on screen size */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            animation: popIn 0.5s forwards;
         }
 
-        .close {
-            color: #007bff; /* Blue close button */
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
         }
 
-        .close:hover,
-        .close:focus {
-            color: #0056b3; /* Darker blue on hover */
-            text-decoration: none;
-            cursor: pointer;
+        .popup-header {
+            font-size: 1.5rem;
+            color: #00ff00;
+            margin-bottom: 10px;
         }
 
-        table {
+        .popup-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th, td {
-            border: 1px solid #007bff;
+            border: 1px solid #00ff00;
             text-align: center;
             padding: 8px;
-            font-family: 'Courier New', monospace; /* Hacking font style */
+            color: #00ff00;
         }
 
         th {
-            background-color: #007bff; /* Blue header */
-            color: #ffffff;
+            background-color: #00ff00;
+            color: #1e1e1e;
         }
 
+        .close-button {
+            background-color: #00ff00;
+            color: #1e1e1e;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .close-button:hover {
+            background-color: #007bff;
+        }
+
+        /* New History Box Design */
         .history {
             max-height: 120px;
             overflow-y: auto;
-            padding: 5px;
-            background-color: #f8f9fa; /* Light background for history */
-            border: 1px solid #007bff;
+            padding: 10px;
+            background-color: #3e3e3e; /* New background color */
+            border: 2px solid #00ff00; /* Keep the green border */
             border-radius: 8px;
+            margin-top: 20px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            font-family: 'Courier New', Courier, monospace; /* Hacking style font */
+            font-size: 1rem; /* Smaller font for a more compact look */
+            position: relative; /* Added for positioning */
+        }
+
+        .history-title {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
         }
 
         .history-item {
             margin: 5px 0;
             padding: 4px;
-            border-bottom: 1px solid #e1e1e1; /* Light divider for history items */
+            border-bottom: 1px solid #007bff;
+            transition: background-color 0.3s;
         }
 
-        .history-item:last-child {
-            border-bottom: none; /* Remove divider for last item */
+        .history-item:hover {
+            background-color: rgba(0, 255, 0, 0.2);
         }
+
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="title">Prediction Timer</div>
+        <div class="title">Hacking Prediction Results</div>
 
         <div class="box">
             <div id="periodDisplay">Period: Loading...</div>
@@ -152,55 +194,66 @@
         </div>
     </div>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <h2>New Result</h2>
-            <table>
+    <!-- Popup Structure -->
+    <div class="popup" id="resultPopup">
+        <div class="popup-header">New Result</div>
+        <table class="popup-table">
+            <thead>
                 <tr>
                     <th>Period Number</th>
                     <th>Result</th>
                 </tr>
-                <tr id="modalData">
-                    <td id="modalPeriod">Loading...</td>
-                    <td id="modalResult">Waiting...</td>
-                </tr>
-            </table>
-        </div>
+            </thead>
+            <tbody id="popupBody">
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+        <button class="close-button" onclick="closePopup()">Close</button>
     </div>
 
     <script>
-        const resultsArray = ["BIG", "SMALL"];
+        const resultsArray = ["SMALL", "BIG"];
         let lastPeriod = "";
+        let intervalId;
 
-        // Timer for 30-second interval
-        setInterval(() => {
-            const calendar = new Date();
-            const seconds = calendar.getSeconds();
-            const remainingSeconds = 30 - (seconds % 30);
-            const minutes = calendar.getMinutes();
-            const totalMinutes = calendar.getHours() * 60 + minutes;
+        // Function to format time
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')} : ${String(remainingSeconds).padStart(2, '0')}`;
+        }
 
-            // Update period number
-            const periodNumber = `${calendar.getFullYear()}${String(calendar.getMonth() + 1).padStart(2, '0')}${String(calendar.getDate()).padStart(2, '0')}30${String(1 + totalMinutes * 2 + (seconds >= 30 ? 1 : 0)).padStart(3, '0')}`;
-            document.getElementById("periodDisplay").textContent = `Period: ${periodNumber}`;
+        function startTimer() {
+            intervalId = setInterval(() => {
+                const now = new Date();
+                const seconds = now.getUTCSeconds();
+                const remainingSeconds = 30 - (seconds % 30);
+                const minutes = now.getUTCMinutes();
+                const totalMinutes = now.getUTCHours() * 60 + minutes;
 
-            // Update timer
-            document.getElementById("timerDisplay").textContent = `00:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+                // Generate the period number based on the provided logic
+                const periodNumber = new Date().toISOString().slice(0, 10).replace(/-/g, '') +
+                    "30" + (1 + totalMinutes * 2 + (seconds >= 30 ? 1 : 0));
 
-            // If 30 seconds have passed
-            if (remainingSeconds === 30) {
-                // Show result
-                if (lastPeriod !== periodNumber) {
-                    lastPeriod = periodNumber;
-                    const result = resultsArray[Math.floor(Math.random() * resultsArray.length)];
-                    document.getElementById("resultDisplay").textContent = `Result: ${result}`;
-                    showModal(periodNumber, result);
-                    addToHistory(periodNumber, result);
+                document.getElementById("periodDisplay").textContent = `Period: ${periodNumber}`;
+                document.getElementById("timerDisplay").textContent = formatTime(remainingSeconds);
+
+                // Show result when period number changes
+                if (remainingSeconds === 30) {
+                    showNewResult(periodNumber);
                 }
+            }, 1000); // Update every second
+        }
+
+        function showNewResult(periodNumber) {
+            if (lastPeriod !== periodNumber) {
+                lastPeriod = periodNumber;
+                const result = resultsArray[Math.floor(Math.random() * resultsArray.length)];
+                document.getElementById("resultDisplay").textContent = `Result: ${result}`;
+                addToHistory(periodNumber, result);
+                showPopup(periodNumber, result); // Show popup with result
             }
-        }, 1000); // Update every second
+        }
 
         function addToHistory(period, result) {
             const historyList = document.getElementById("historyList");
@@ -208,24 +261,25 @@
             historyItem.className = "history-item";
             historyItem.textContent = `Period: ${period} - Result: ${result}`;
             historyList.appendChild(historyItem);
-            historyList.scrollTop = historyList.scrollHeight; // Scroll to the latest entry
-        }
-
-        function showModal(period, result) {
-            document.getElementById("modalPeriod").textContent = period;
-            document.getElementById("modalResult").textContent = result;
-            document.getElementById("myModal").style.display = "block";
-        }
-
-        document.getElementById("closeModal").onclick = function() {
-            document.getElementById("myModal").style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target === document.getElementById("myModal")) {
-                document.getElementById("myModal").style.display = "none";
+            if (historyList.childElementCount > 10) {
+                historyList.removeChild(historyList.firstChild); // Limit history to last 10 entries
             }
         }
+
+        function showPopup(period, result) {
+            const popupBody = document.getElementById("popupBody");
+            popupBody.innerHTML = `<tr><td>${period}</td><td>${result}</td></tr>`;
+            document.getElementById("resultPopup").style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById("resultPopup").style.display = 'none';
+        }
+
+        // Start the timer when the window loads
+        window.onload = function() {
+            startTimer();
+        };
     </script>
 
 </body>
